@@ -1,1 +1,144 @@
-# todo
+pipeline {
+    agent any
+    options { skipDefaultCheckout() }
+
+    stages {
+
+        stage('Get Code') {
+            steps {
+                cleanWs()
+                checkout scm
+                echo WORKSPACE
+            }
+        }
+
+        stage('Unit') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    sh '''
+                        export PYTHONPATH=$WORKSPACE
+                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/python -m pytest \
+                            --cov=app \
+                            --cov-branch \
+                            --cov-report=xml \
+                            --junitxml=result-unit.xml \
+                            test/unit
+                    '''
+                    junit 'result-unit.xml'
+                    stash name: 'coverage-report', includes: 'coverage.xml'
+                }
+            }
+        }
+
+        stage('Rest') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    sh '''
+                        export PYTHONPATH=$WORKSPACE
+                        export FLASK_APP=$WORKSPACE/app/api.py
+                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flask run &
+                        FLASK_PID=$!
+                        java -jar $WORKSPACE/test/wiremock/wiremock-standalone-3.13.2.jar \
+                            --port 9090 \
+                            --root-dir $WORKSPACE/test/wiremock &
+                        WM_PID=$!
+                        sleep 10
+                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/python -m pytest \
+                            --junitxml=result-rest.xml \
+                            test/rest
+                        kill $FLASK_PID $WM_PID
+                    '''
+                    junit 'result-rest.xml'
+                }
+            }
+        }
+
+        stage('Static') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    sh '''
+                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flake8 \
+                            --format=pylint \
+                            --exit-zero \
+                            app > flake8.out
+                    '''
+                    recordIssues(
+                        qualityGates: [
+                            [integerThreshold: 8,  type: 'TOTAL'],
+                            [criticality: 'FAILURE', integerThreshold: 10, type: 'TOTAL']
+                        ],
+                        sourceCodeRetention: 'NEVER',
+                        tools: [flake8(pattern: 'flake8.out')]
+                    )
+                }
+            }
+        }
+
+        stage('Security') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    sh '''
+                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/bandit \
+                            --exit-zero \
+                            -r app \
+                            -f custom \
+                            -o bandit.out \
+                            --msg-template "{abspath}:{line}: [{test_id}] {msg}"
+                    '''
+                    recordIssues(
+                        qualityGates: [
+                            [integerThreshold: 2,  type: 'TOTAL'],
+                            [criticality: 'FAILURE', integerThreshold: 4, type: 'TOTAL']
+                        ],
+                        sourceCodeRetention: 'NEVER',
+                        tools: [pyLint(name: 'bandit', pattern: 'bandit.out')]
+                    )
+                }
+            }
+        }
+
+        stage('Coverage') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    unstash 'coverage-report'
+                    recordCoverage(
+                        qualityGates: [
+                            [criticality: 'ERROR', metric: 'LINE',   integerThreshold: 85, threshold: 85.0],
+                            [criticality: 'NOTE',  metric: 'LINE',   integerThreshold: 95, threshold: 95.0],
+                            [criticality: 'ERROR', metric: 'BRANCH', integerThreshold: 80, threshold: 80.0],
+                            [criticality: 'NOTE',  metric: 'BRANCH', integerThreshold: 90, threshold: 90.0]
+                        ],
+                        tools: [[parser: 'COBERTURA', pattern: 'coverage.xml']]
+                    )
+                }
+            }
+        }
+
+        stage('Performance') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    sh '''
+                        export PYTHONPATH=$WORKSPACE
+                        export FLASK_APP=$WORKSPACE/app/api.py
+                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flask run &
+                        FLASK_PID=$!
+                        sleep 10
+                        /opt/homebrew/bin/jmeter \
+                            -n \
+                            -t $WORKSPACE/test/jmeter/flask.jmx \
+                            -l result-performance.jtl
+                        kill $FLASK_PID
+                    '''
+                    perfReport sourceDataFiles: 'result-performance.jtl'
+                }
+            }
+        }
+
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
