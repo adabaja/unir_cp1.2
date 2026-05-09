@@ -1,31 +1,20 @@
-# CP1.2 – Pipeline CI con Jenkins
+# Caso Práctico 1.2 - DevOps & Cloud
 
-Proyecto de la asignatura **Experto Universitario en DevOps & Cloud**.
+Repositorio del CP1.2 del curso Experto Universitario en DevOps & Cloud (UNIR).
 
-## Descripción
+El proyecto es una calculadora en Python con API REST usando Flask. Lo uso para montar un pipeline de CI en Jenkins con distintos tipos de pruebas.
 
-Aplicación Python de calculadora con microservicios Flask, utilizada como base para practicar
-integración continua con Jenkins. Incluye pruebas unitarias, de integración, análisis estático,
-seguridad, cobertura y rendimiento.
+## Qué incluye
 
-## Estructura
-
-```
-app/          → Librería calculadora + API Flask
-test/unit/    → Pruebas unitarias (pytest)
-test/rest/    → Pruebas de integración REST
-test/jmeter/  → Plan de pruebas de rendimiento (JMeter)
-test/wiremock/→ Mock para endpoint sqrt
-```
-
-## Herramientas
-
-- Python 3 + pytest, flask, flake8, bandit, coverage
-- Jenkins (JUnit, Warnings-NG, Coverage, Performance)
-- JMeter
-- Wiremock
+- `app/` - la calculadora y la API
+- `test/unit/` - pruebas unitarias
+- `test/rest/` - pruebas de integración
+- `test/jmeter/` - pruebas de rendimiento
+- `test/wiremock/` - mock para las pruebas REST
+- `Jenkinsfile` - pipeline principal
+- `JENKINSFILE_agentes` - pipeline distribuido en 3 agentes
 
 ## Ramas
 
-- `master` → código estable (Reto 1 y 2)
-- `feature_fix_coverage` → cobertura 100% (Reto 3)
+- `master` - rama principal
+- `feature_fix_coverage` - mejora de cobertura al 100%
