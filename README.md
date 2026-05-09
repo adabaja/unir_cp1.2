@@ -24,4 +24,10 @@ El proyecto es una calculadora en Python con API REST usando Flask. Lo uso para 
 - Se uso un nuevo _ENV_ `conda activate unir_devops`.
 - Se instalo los paquetes necesarios `pip install pytest flask flake8 bandit coverage`
 - Se instalo Jenkins y jmeter usando el *brew* porque estoy usando MAC. `brew install jenkins-lts` & `brew install jmeter`
-- Gihub conectado por SSH a mi macbook, no es necesario usar tokens.
+- Github conectado por SSH a mi macbook, no es necesario usar tokens.
+
+## To Do
+
+- Deberia usar el paquete de pip-audit como fase en jenkins --> Auditar los paquetes
+- hacer el *JENKINSFILE*
+- hacer el *JENKINSFILE_agentes*
