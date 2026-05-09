@@ -25,4 +25,3 @@ El proyecto es una calculadora en Python con API REST usando Flask. Lo uso para 
 - Se instalo los paquetes necesarios `pip install pytest flask flake8 bandit coverage`
 - Se instalo Jenkins y jmeter usando el *brew* porque estoy usando MAC. `brew install jenkins-lts` & `brew install jmeter`
 - Gihub conectado por SSH a mi macbook, no es necesario usar tokens.
-
