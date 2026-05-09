@@ -11,13 +11,8 @@ El proyecto es una calculadora en Python con API REST usando Flask. Lo uso para 
 - `test/rest/` - pruebas de integración
 - `test/jmeter/` - pruebas de rendimiento
 - `test/wiremock/` - mock para las pruebas REST
-- `Jenkinsfile` - pipeline principal
+- `JENKINSFILE` - pipeline principal
 - `JENKINSFILE_agentes` - pipeline distribuido en 3 agentes
-
-## Ramas
-
-- `master` - rama principal
-- `feature_fix_coverage` - mejora de cobertura al 100%
 
 ## Notas
 
