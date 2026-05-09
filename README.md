@@ -1,5 +1,31 @@
-# Repo para EU - DevOps&Cloud - UNIR
+# CP1.2 – Pipeline CI con Jenkins
 
-Este repositorio incluye un proyecto sencillo para demostrar los conceptos de pruebas unitarias, pruebas de servicio, uso de Wiremock y pruebas de rendimiento
-El objetivo es que el alumno entienda estos conceptos, por lo que el código y la estructura del proyecto son especialmente sencillos.
-Este proyecto sirve también como fuente de código para el pipeline de Jenkins.
+Proyecto de la asignatura **Experto Universitario en DevOps & Cloud**.
+
+## Descripción
+
+Aplicación Python de calculadora con microservicios Flask, utilizada como base para practicar
+integración continua con Jenkins. Incluye pruebas unitarias, de integración, análisis estático,
+seguridad, cobertura y rendimiento.
+
+## Estructura
+
+```
+app/          → Librería calculadora + API Flask
+test/unit/    → Pruebas unitarias (pytest)
+test/rest/    → Pruebas de integración REST
+test/jmeter/  → Plan de pruebas de rendimiento (JMeter)
+test/wiremock/→ Mock para endpoint sqrt
+```
+
+## Herramientas
+
+- Python 3 + pytest, flask, flake8, bandit, coverage
+- Jenkins (JUnit, Warnings-NG, Coverage, Performance)
+- JMeter
+- Wiremock
+
+## Ramas
+
+- `master` → código estable (Reto 1 y 2)
+- `feature_fix_coverage` → cobertura 100% (Reto 3)
