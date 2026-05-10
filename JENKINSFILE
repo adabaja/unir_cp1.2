@@ -15,7 +15,7 @@ pipeline {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     sh '''
                         export PYTHONPATH=$WORKSPACE
-                        /Users/ahmedda/anaconda3/envs/unir_devops/bin/python -m pytest --cov=app --cov-branch --cov-report=xml --junitxml=result-unit.xml test/unit
+                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/python -m pytest --cov=app --cov-branch --cov-report=xml --junitxml=result-unit.xml test/unit
                     '''
                     junit 'result-unit.xml'
                     stash name: 'coverage-report', includes: 'coverage.xml'
@@ -30,15 +30,14 @@ pipeline {
                         export PYTHONPATH=$WORKSPACE
                         export FLASK_APP=$WORKSPACE/app/api.py
                         # Start flask in background
-                        /Users/ahmedda/anaconda3/envs/unir_devops/bin/flask run --port 5001 & 
-                        FLASK_PID=$!
+                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flask run --port 5001 & FLASK_PID=$!
                         
                         # Start wiremock
-                        java -jar "$WORKSPACE/test/wiremock/wiremock-standalone-3.13.2.jar" --port 9090 --root-dir "$WORKSPACE/test/wiremock" & 
-                        WM_PID=$!
+                        java -jar "$WORKSPACE/test/wiremock/wiremock-standalone-3.13.2.jar" --port 9090 --root-dir "$WORKSPACE/test/wiremock" & WM_PID=$!
                         
                         sleep 10
-                        /Users/ahmedda/anaconda3/envs/unir_devops/bin/python -m pytest --junitxml=result-rest.xml test/rest
+
+                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/python -m pytest --junitxml=result-rest.xml test/rest
                         
                         # Kill the processes so they don't stay running
                         kill $FLASK_PID
@@ -52,7 +51,7 @@ pipeline {
         stage('Fase 4: Static Analysis (Flake8)') {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                    sh '/Users/ahmedda/anaconda3/envs/unir_devops/bin/flake8 --format=pylint --exit-zero --app app > flake8.out'
+                    sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flake8 --format=pylint --exit-zero --app app > flake8.out'
                     recordIssues(tools: [flake8(pattern: 'flake8.out')])
                 }
             }
@@ -61,7 +60,7 @@ pipeline {
         stage('Fase 5: Security Scan (Bandit)') {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                    sh '/Users/ahmedda/anaconda3/envs/unir_devops/bin/bandit --exit-zero -r app -f custom -o bandit.out'
+                    sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/bandit --exit-zero -r app -f custom -o bandit.out'
                     recordIssues(tools: [pyLint(name: 'bandit', pattern: 'bandit.out')])
                 }
             }
@@ -80,9 +79,10 @@ pipeline {
                     sh '''
                         export PYTHONPATH=$WORKSPACE
                         export FLASK_APP=$WORKSPACE/app/api.py
-                        /Users/ahmedda/anaconda3/envs/unir_devops/bin/flask run &
-                        FLASK_PID=$!
+                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flask run & FLASK_PID=$!
+
                         sleep 10
+
                         /opt/homebrew/bin/jmeter -n -t "$WORKSPACE/test/jmeter/flask.jmx" -l result-performance.jtl
                         kill $FLASK_PID
                     '''
