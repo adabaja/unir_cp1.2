@@ -29,7 +29,8 @@ pipeline {
                     sh '''
                         export PYTHONPATH=$WORKSPACE
                         export FLASK_APP=$WORKSPACE/app/api.py
-                        # Start flask in background
+
+                        # Startflask en background
                         /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flask run --port 5001 & FLASK_PID=$!
                         
                         # Start wiremock
@@ -39,7 +40,7 @@ pipeline {
 
                         /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/python -m pytest --junitxml=result-rest.xml test/rest
                         
-                        # Kill the processes so they don't stay running
+                        # Kill processes
                         kill $FLASK_PID
                         kill $WM_PID
                     '''
@@ -51,7 +52,7 @@ pipeline {
         stage('Fase 4: Static Analysis (Flake8)') {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                    sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flake8 --format=pylint --exit-zero --app app > flake8.out'
+                    sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flake8 --format=pylint --exit-zero app > flake8.out'
                     recordIssues(tools: [flake8(pattern: 'flake8.out')])
                 }
             }
