@@ -38,9 +38,9 @@ pipeline {
                         export FLASK_APP=$WORKSPACE/app/api.py
                         /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flask run &
                         FLASK_PID=$!
-                        java -jar $WORKSPACE/test/wiremock/wiremock-standalone-3.13.2.jar \
+                        java -jar "$WORKSPACE/test/wiremock/wiremock-standalone-3.13.2.jar" \
                             --port 9090 \
-                            --root-dir $WORKSPACE/test/wiremock &
+                            --root-dir "$WORKSPACE/test/wiremock" &
                         WM_PID=$!
                         sleep 10
                         /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/python -m pytest \
@@ -125,7 +125,7 @@ pipeline {
                         sleep 10
                         /opt/homebrew/bin/jmeter \
                             -n \
-                            -t $WORKSPACE/test/jmeter/flask.jmx \
+                            -t "$WORKSPACE/test/jmeter/flask.jmx" \
                             -l result-performance.jtl
                         kill $FLASK_PID
                     '''
