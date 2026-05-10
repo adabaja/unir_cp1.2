@@ -36,12 +36,10 @@ pipeline {
                     sh '''
                         export PYTHONPATH=$WORKSPACE
                         export FLASK_APP=$WORKSPACE/app/api.py
-                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flask run &
-                        FLASK_PID=$!
+                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flask run --port 5001 & FLASK_PID=$!
                         java -jar "$WORKSPACE/test/wiremock/wiremock-standalone-3.13.2.jar" \
                             --port 9090 \
-                            --root-dir "$WORKSPACE/test/wiremock" &
-                        WM_PID=$!
+                            --root-dir "$WORKSPACE/test/wiremock" & WM_PID=$!
                         sleep 10
                         /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/python -m pytest \
                             --junitxml=result-rest.xml \
