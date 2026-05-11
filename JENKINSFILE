@@ -57,13 +57,24 @@ pipeline {
             }
         }
 
-        stage('Fase 5: Security Scan (Bandit)') {
+        stage('Fase 5.1: Security Scan (Bandit)') {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/bandit --exit-zero -r app -f custom -o bandit.out'
                     recordIssues(tools: [pyLint(name: 'bandit', pattern: 'bandit.out')])
                 }
             }
+        }
+
+        stage('Fase 5.2: Pip Audit') {
+          steps {
+            catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+               sh '''
+                  /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/pip-audit
+                  /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/pip check
+                  '''
+             }
+           }
         }
 
         stage('Fase 6: Check Coverage') {
