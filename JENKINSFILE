@@ -15,10 +15,9 @@ pipeline {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     sh '''
                         export PYTHONPATH=$WORKSPACE
-                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/python -m pytest --cov=app --cov-branch --cov-report=xml --junitxml=result-unit.xml test/unit
+                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/python -m pytest --junitxml=result-unit.xml test/unit
                     '''
                     junit 'result-unit.xml'
-                    stash name: 'coverage-report', includes: 'coverage.xml'
                 }
             }
         }
@@ -30,7 +29,7 @@ pipeline {
                         export PYTHONPATH=$WORKSPACE
                         export FLASK_APP=$WORKSPACE/app/api.py
 
-                        # Startflask en background
+                        # Start flask in background
                         /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flask run --port 5001 & FLASK_PID=$!
                         
                         # Start wiremock
@@ -68,11 +67,19 @@ pipeline {
         }
 
         stage('Fase 6: Check Coverage') {
-            steps {
-                unstash 'coverage-report'
-                recordCoverage(tools: [[parser: 'COBERTURA', pattern: 'coverage.xml']])
-            }
-        }
+          steps {
+            catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+              sh '''
+                export PYTHONPATH=$WORKSPACE
+                /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/coverage run \
+                    --source=app --omit=app/__init__.py,app/api.py \
+                    -m pytest test/unit
+                /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/coverage xml
+                 '''
+            recordCoverage(tools: [[parser: 'COBERTURA', pattern: 'coverage.xml']])
+             }
+          }
+       }
 
         stage('Fase 7: Performance Test') {
             steps {
