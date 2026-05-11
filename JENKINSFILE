@@ -9,7 +9,16 @@ pipeline {
                 checkout scm
             }
         }
-
+          stage('Fase 2.1: Pip Check') {
+          steps {
+            catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+               sh '''
+                   # Check dependencies of the installed pacakges
+                  /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/pip check
+                  '''
+             }
+           }
+        }
         stage('Fase 2: Unit Tests') {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
@@ -71,7 +80,6 @@ pipeline {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                sh '''
                   /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/pip-audit
-                  /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/pip check
                   '''
              }
            }
