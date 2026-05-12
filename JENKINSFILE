@@ -105,7 +105,7 @@ pipeline {
                     sh '''
                         export PYTHONPATH=$WORKSPACE
                         export FLASK_APP=$WORKSPACE/app/api.py
-                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flask run & FLASK_PID=$!
+                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flask run --port 5001 & FLASK_PID=$!
 
                         sleep 10
 
