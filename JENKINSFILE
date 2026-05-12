@@ -56,36 +56,7 @@ pipeline {
                 }
             }
         }
-
-        stage('Fase 4: Static Analysis (Flake8)') {
-            steps {
-                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                    sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flake8 --format=pylint --exit-zero app > flake8.out'
-                    recordIssues(tools: [flake8(pattern: 'flake8.out')])
-                }
-            }
-        }
-
-        stage('Fase 5.1: Security Scan (Bandit)') {
-            steps {
-                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                    sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/bandit --exit-zero -r app -f custom -o bandit.out'
-                    recordIssues(tools: [pyLint(name: 'bandit', pattern: 'bandit.out')])
-                }
-            }
-        }
-
-        stage('Fase 5.2: Pip Audit') {
-          steps {
-            catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-               sh '''
-                  /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/pip-audit
-                  '''
-             }
-           }
-        }
-
-        stage('Fase 6: Check Coverage') {
+        stage('Fase 4: Check Coverage') {
           steps {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
               sh '''
@@ -95,10 +66,38 @@ pipeline {
                     -m pytest test/unit
                 /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/coverage xml
                  '''
-            recordCoverage(tools: [[parser: 'COBERTURA', pattern: 'coverage.xml']])
+                recordCoverage(qualityGates: [[criticality: 'NOTE', metric: 'LINE', threshold: 95.0], [criticality: 'FAILURE', metric: 'LINE', threshold: 85.0], [criticality: 'NOTE', metric: 'BRANCH', threshold: 90.0], [criticality: 'FAILURE', metric: 'BRANCH', threshold: 80.0]], tools: [[parser: 'COBERTURA', pattern: 'coverage.xml']])
              }
           }
        }
+
+        stage('Fase 5: Static Analysis (Flake8)') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flake8 --format=pylint --exit-zero app > flake8.out'
+                    recordIssues(tools: [flake8(pattern: 'flake8.out')])
+                }
+            }
+        }
+
+        stage('Fase 6.1: Security Scan (Bandit)') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/bandit --exit-zero -r app -f custom -o bandit.out'
+                    recordIssues(tools: [pyLint(name: 'bandit', pattern: 'bandit.out')])
+                }
+            }
+        }
+
+        stage('Fase 6.2: Pip Audit') {
+          steps {
+            catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+               sh '''
+                  /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/pip-audit
+                  '''
+             }
+           }
+        }
 
         stage('Fase 7: Performance Test') {
             steps {
