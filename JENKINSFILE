@@ -19,7 +19,7 @@ pipeline {
              }
            }
         }
-        stage('Fase 2: Unit Tests') {
+        stage('Fase 2.2: Unit Tests') {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     sh '''
@@ -31,7 +31,7 @@ pipeline {
             }
         }
 
-        stage('Fase 3: Rest Tests') {
+        stage('Fase 2.3: Rest Tests') {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     sh '''
@@ -56,7 +56,7 @@ pipeline {
                 }
             }
         }
-        stage('Fase 4: Check Coverage') {
+        stage('Fase 3.1: Check Coverage') {
           steps {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
               sh '''
@@ -71,7 +71,7 @@ pipeline {
           }
        }
 
-        stage('Fase 5: Static Analysis (Flake8)') {
+        stage('Fase 3.2: Static Analysis (Flake8)') {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flake8 --format=pylint --exit-zero app > flake8.out'
@@ -80,7 +80,7 @@ pipeline {
             }
         }
 
-        stage('Fase 6.1: Security Scan (Bandit)') {
+        stage('Fase 3.3: Security Scan (Bandit)') {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/bandit --exit-zero -r app -f custom -o bandit.out'
@@ -89,7 +89,7 @@ pipeline {
             }
         }
 
-        stage('Fase 6.2: Pip Audit') {
+        stage('Fase 3.4: Pip Audit') {
           steps {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                sh '''
@@ -99,7 +99,7 @@ pipeline {
            }
         }
 
-        stage('Fase 7: Performance Test') {
+        stage('Fase 4: Performance Test') {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     sh '''
