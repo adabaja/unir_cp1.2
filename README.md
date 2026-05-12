@@ -24,5 +24,6 @@ El proyecto es una calculadora en Python con API REST usando Flask. Lo uso para 
 ## To Do
 
 - Deberia usar el paquete de pip-audit como fase en jenkins --> Auditar los paquetes
-- hacer el *JENKINSFILE* deberia agregar qualityGate para pip check y pip-audit? o mejor mando lo que pide el reto 1 -> si termino antes los retos 2 y 3 lo agrego como experimento. 
+- hacer el *JENKINSFILE*
 - hacer el *JENKINSFILE_agentes*
+- deberia agregar qualityGate para pip check y pip-audit? o mejor mando lo que pide el reto 1 -> si termino antes los retos 2 y 3 lo agrego como experimento. 
