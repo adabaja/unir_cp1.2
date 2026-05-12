@@ -75,7 +75,10 @@ pipeline {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flake8 --format=pylint --exit-zero app > flake8.out'
-                    recordIssues(tools: [flake8(pattern: 'flake8.out')])
+                
+                    // Clase 11
+                    recordIssues tools: [flake8(pattern: 'flake8.out')],
+                    qualityGates: [[unstable: true, threshold: 8, type: 'TOTAL'], [unstable: false, threshold: 10, type: 'TOTAL']]
                 }
             }
         }
