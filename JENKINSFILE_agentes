@@ -147,10 +147,10 @@ pipeline {
 
                         sleep 10
 
-                        /opt/homebrew/bin/jmeter -n -t "$WORKSPACE/test/jmeter/flask.jmx" -l result-performance.jtl
+                        /opt/homebrew/bin/jmeter -n -t "$WORKSPACE/test/jmeter/flask.jmx" -l flask.jtl
                         kill $FLASK_PID
                     '''
-                    perfReport sourceDataFiles: 'result-performance.jtl'
+                    perfReport sourceDataFiles: 'flask.jtl'
                 }
             }
         }
