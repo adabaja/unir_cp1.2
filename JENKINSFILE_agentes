@@ -13,7 +13,7 @@ pipeline {
     stage('Fase 2: Pip Check, Unit Tests, Rest Tests') {
         parallel {
           stage('Fase 2.1: Pip Check') {
-          agent { label 'agent2' }
+          agent { label 'agent1' }
           steps {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                 sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
@@ -39,7 +39,7 @@ pipeline {
         }
 
         stage('Fase 2.3: Rest Tests') {
-            agent { label 'agent2' }
+            agent { label 'agent3' }
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
@@ -70,7 +70,7 @@ pipeline {
     stage('Fase 3: Quality Gates (coverage, static analysis, security)') {
         parallel {
         stage('Fase 3.1: Check Coverage') {
-          agent { label 'agent3' }
+          agent { label 'agent1' }
           steps {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                 sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
@@ -87,7 +87,7 @@ pipeline {
        }
 
         stage('Fase 3.2: Static Analysis (Flake8)') {
-            agent { label 'agent3' }
+            agent { label 'agent2' }
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
@@ -127,7 +127,7 @@ pipeline {
     }
 
         stage('Fase 4: Performance Test') {
-            agent { label 'agent1' }
+            agent { label 'agent2' }
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
