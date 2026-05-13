@@ -1,6 +1,5 @@
 pipeline {
-    
-
+    agent none
     stages {
         stage('Fase 1: Get Code') {
             agent { label 'agent1' }
@@ -14,7 +13,7 @@ pipeline {
     stage('Fase 2: Pip Check, Unit Tests, Rest Tests') {
         parallel {
           stage('Fase 2.1: Pip Check') {
-            agent { label 'agent2' }
+          agent { label 'agent2' }
           steps {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                 sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
@@ -71,8 +70,8 @@ pipeline {
     stage('Fase 3: Quality Gates (coverage, static analysis, security)') {
         parallel {
         stage('Fase 3.1: Check Coverage') {
+          agent { label 'agent3' }
           steps {
-            agent { label 'agent3' }
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                 sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
               sh '''
@@ -88,8 +87,8 @@ pipeline {
        }
 
         stage('Fase 3.2: Static Analysis (Flake8)') {
+            agent { label 'agent3' }
             steps {
-                agent { label 'agent3' }
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
                     sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flake8 --format=pylint --exit-zero app > flake8.out'
@@ -103,8 +102,8 @@ pipeline {
         }
 
         stage('Fase 3.3: Security Scan (Bandit)') {
+            agent { label 'agent3' }
             steps {
-                agent { label 'agent3' }
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
                     sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/bandit --exit-zero -r app -f custom -o bandit.out --msg-template "{abspath}:{line}: [{test_id}] {msg}"'
@@ -114,8 +113,8 @@ pipeline {
         }
 
         stage('Fase 3.4: Pip Audit') {
+          agent { label 'agent3' }
           steps {
-            agent { label 'agent3' }
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
                sh '''
@@ -128,8 +127,8 @@ pipeline {
     }
 
         stage('Fase 4: Performance Test') {
+            agent { label 'agent1' }
             steps {
-                agent { label 'agent1' }
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
                     sh '''
