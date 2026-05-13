@@ -8,6 +8,7 @@ pipeline {
                 sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
                 cleanWs()
                 checkout scm
+                stash name: 'code', includes: '**/*' 
             }
         }
     stage('Fase 2: Pip Check, Unit Tests, Rest Tests') {
@@ -16,10 +17,11 @@ pipeline {
           agent { label 'agent1' }
           steps {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                unstash 'code' 
                 sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
-               sh '''
-                   # Check dependencies of the installed pacakges
-                  /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/pip check
+                sh '''
+                    # Check dependencies of the installed pacakges
+                    /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/pip check
                   '''
              }
            }
@@ -28,6 +30,7 @@ pipeline {
             agent { label 'agent2' }
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    unstash 'code' 
                     sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
                     sh '''
                         export PYTHONPATH=$WORKSPACE
@@ -42,6 +45,7 @@ pipeline {
             agent { label 'agent3' }
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    unstash 'code' 
                     sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
                     sh '''
                         export PYTHONPATH=$WORKSPACE
@@ -73,13 +77,14 @@ pipeline {
           agent { label 'agent1' }
           steps {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                unstash 'code' 
                 sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
-              sh '''
-                export PYTHONPATH=$WORKSPACE
-                /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/coverage run \
+                sh '''
+                    export PYTHONPATH=$WORKSPACE
+                    /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/coverage run \
                     --source=app --omit=app/__init__.py,app/api.py \
                     -m pytest test/unit
-                /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/coverage xml
+                    /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/coverage xml
                  '''
                 recordCoverage(qualityGates: [[criticality: 'NOTE', metric: 'LINE', threshold: 95.0], [criticality: 'FAILURE', metric: 'LINE', threshold: 85.0], [criticality: 'NOTE', metric: 'BRANCH', threshold: 90.0], [criticality: 'FAILURE', metric: 'BRANCH', threshold: 80.0]], tools: [[parser: 'COBERTURA', pattern: 'coverage.xml']])
              }
@@ -90,6 +95,7 @@ pipeline {
             agent { label 'agent2' }
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    unstash 'code' 
                     sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
                     sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/flake8 --format=pylint --exit-zero app > flake8.out'
                 
@@ -105,6 +111,7 @@ pipeline {
             agent { label 'agent3' }
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    unstash 'code' 
                     sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
                     sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/bandit --exit-zero -r app -f custom -o bandit.out --msg-template "{abspath}:{line}: [{test_id}] {msg}"'
                     recordIssues(qualityGates: [[criticality: 'UNSTABLE', integerThreshold: 2, type: 'TOTAL'], [criticality: 'FAILURE', integerThreshold: 4, type: 'TOTAL']], tools: [pyLint(name: 'Bandit', pattern: 'bandit.out')])
@@ -116,6 +123,7 @@ pipeline {
           agent { label 'agent3' }
           steps {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+               unstash 'code' 
                sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
                sh '''
                   /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/pip-audit
@@ -130,6 +138,7 @@ pipeline {
             agent { label 'agent2' }
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    unstash 'code' 
                     sh 'echo "Agente: $(whoami) | $(hostname) | $WORKSPACE"'
                     sh '''
                         export PYTHONPATH=$WORKSPACE
