@@ -86,8 +86,8 @@ pipeline {
         stage('Fase 3.3: Security Scan (Bandit)') {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                    sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/bandit --exit-zero -r app -f custom -o bandit.out'
-                    recordIssues(tools: [pyLint(name: 'bandit', pattern: 'bandit.out')])
+                    sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/bandit --exit-zero -r app -f custom -o bandit.out --msg-template "{abspath}:{line}: [{test_id}] {msg}"'
+                    recordIssues(qualityGates: [[criticality: 'UNSTABLE', integerThreshold: 2, type: 'TOTAL'], [criticality: 'FAILURE', integerThreshold: 4, type: 'TOTAL']], tools: [pyLint(name: 'Bandit', pattern: 'bandit.out')])
                 }
             }
         }
