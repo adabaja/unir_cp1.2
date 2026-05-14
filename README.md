@@ -27,4 +27,4 @@ El proyecto es una calculadora en Python con API REST usando Flask. Lo uso para 
 - hacer el *JENKINSFILE* (TERMINADO)
 - hacer el *JENKINSFILE_agentes* (TERMINADO)
 - ~deberia agregar qualityGate para pip check y pip-audit? o mejor mando lo que pide el reto 1 -> si termino antes los retos 2 y 3 lo agrego como experimento. (NO COMPLICARSE)~
-- Hacer el documento: Reto 1 (TERMINADO), Reto 2 (En proceso), Reto 3 (-)
+- Hacer el documento: Reto 1 (TERMINADO), Reto 2 (TERMINADO), Reto 3 (TERMINADO)
