@@ -82,7 +82,7 @@ pipeline {
                 sh '''
                     export PYTHONPATH=$WORKSPACE
                     /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/coverage run \
-                    --source=app --omit=app/__init__.py,app/api.py \
+                    --branch --source=app --omit=app/__init__.py,app/api.py \
                     -m pytest test/unit
                     /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/coverage xml
                  '''
