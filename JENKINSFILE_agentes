@@ -10,6 +10,9 @@ pipeline {
                 checkout scm
                 stash name: 'code', includes: '**/*' 
             }
+        post {
+            always { cleanWs() }
+            }
         }
     stage('Fase 2: Pip Check, Unit Tests, Rest Tests') {
         parallel {
