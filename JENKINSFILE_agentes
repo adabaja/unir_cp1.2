@@ -25,6 +25,9 @@ pipeline {
                   '''
              }
            }
+        post {
+            always { cleanWs() }
+            }
         }
         stage('Fase 2.2: Unit Tests') {
             agent { label 'agent2' }
@@ -38,6 +41,9 @@ pipeline {
                     '''
                     junit 'result-unit.xml'
                 }
+            }
+        post {
+            always { cleanWs() }
             }
         }
 
@@ -68,6 +74,9 @@ pipeline {
                     junit 'result-rest.xml'
                 }
             }
+        post {
+            always { cleanWs() }
+            }
         }
         }
     }
@@ -89,6 +98,9 @@ pipeline {
                 recordCoverage(qualityGates: [[criticality: 'NOTE', metric: 'LINE', threshold: 95.0], [criticality: 'FAILURE', metric: 'LINE', threshold: 85.0], [criticality: 'NOTE', metric: 'BRANCH', threshold: 90.0], [criticality: 'FAILURE', metric: 'BRANCH', threshold: 80.0]], tools: [[parser: 'COBERTURA', pattern: 'coverage.xml']])
              }
           }
+        post {
+            always { cleanWs() }
+            }
        }
 
         stage('Fase 3.2: Static Analysis (Flake8)') {
@@ -105,6 +117,9 @@ pipeline {
                     recordIssues(qualityGates: [[criticality: 'UNSTABLE', integerThreshold: 8, type: 'TOTAL'], [criticality: 'FAILURE', integerThreshold: 10, type: 'TOTAL']], tools: [flake8(pattern: 'flake8.out')])
                 }
             }
+        post {
+            always { cleanWs() }
+            }
         }
 
         stage('Fase 3.3: Security Scan (Bandit)') {
@@ -116,6 +131,9 @@ pipeline {
                     sh '/Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/bandit --exit-zero -r app -f custom -o bandit.out --msg-template "{abspath}:{line}: [{test_id}] {msg}"'
                     recordIssues(qualityGates: [[criticality: 'UNSTABLE', integerThreshold: 2, type: 'TOTAL'], [criticality: 'FAILURE', integerThreshold: 4, type: 'TOTAL']], tools: [pyLint(name: 'Bandit', pattern: 'bandit.out')])
                 }
+            }
+        post {
+            always { cleanWs() }
             }
         }
 
@@ -130,6 +148,9 @@ pipeline {
                   '''
              }
            }
+        post {
+            always { cleanWs() }
+            }
         }
         }
     }
@@ -152,6 +173,9 @@ pipeline {
                     '''
                     perfReport sourceDataFiles: 'flask.jtl'
                 }
+            }
+        post {
+            always { cleanWs() }
             }
         }
     }
