@@ -24,7 +24,7 @@ pipeline {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     sh '''
                         export PYTHONPATH=$WORKSPACE
-                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/python -m pytest --junitxml=result-unit.xml test/unit
+                        /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/python -m pytest --junitxml=result-unit.xml --cov=app --cov-branch --cov-report=xml test/unit
                     '''
                     junit 'result-unit.xml'
                 }
@@ -59,13 +59,7 @@ pipeline {
         stage('Fase 3.1: Check Coverage') {
           steps {
             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-              sh '''
-                export PYTHONPATH=$WORKSPACE
-                /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/coverage run \
-                    --branch --source=app --omit=app/__init__.py,app/api.py \
-                    -m pytest test/unit
-                /Users/ahmeddabajagebara/anaconda3/envs/unir_devops/bin/coverage xml
-                 '''
+              sh 'echo "Coverage report usando los datos de la fase 2.2"'
                 recordCoverage(qualityGates: [[criticality: 'NOTE', metric: 'LINE', threshold: 95.0], [criticality: 'FAILURE', metric: 'LINE', threshold: 85.0], [criticality: 'NOTE', metric: 'BRANCH', threshold: 90.0], [criticality: 'FAILURE', metric: 'BRANCH', threshold: 80.0]], tools: [[parser: 'COBERTURA', pattern: 'coverage.xml']])
              }
           }
